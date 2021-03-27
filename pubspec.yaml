@@ -1,0 +1,26 @@
+name: wagr_challenge
+description: A new Flutter application.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  provider: 4.3.2+3
+  firebase_core: 0.5.3
+  cloud_functions: 0.7.2
+  flutter_hooks: 0.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/response.json
