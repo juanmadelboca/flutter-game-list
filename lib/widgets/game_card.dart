@@ -115,12 +115,12 @@ class GameCard extends StatelessWidget {
   }
 
   String _calculateSpread(String spread, {bool awayTeam = false}) {
-    String calculatedSpread;
     if (spread == null) return 'Odds pending';
-    calculatedSpread = awayTeam ? (double.parse(spread) * -1).toString() : spread;
-    if (double.parse(calculatedSpread) > 0) {
-      calculatedSpread = '+' + calculatedSpread;
+    double calculatedSpread = double.parse(spread);
+    calculatedSpread = awayTeam ? (calculatedSpread * -1):calculatedSpread;
+    if (calculatedSpread > 0) {
+      return'+' + calculatedSpread.toString();
     }
-    return calculatedSpread;
+    return calculatedSpread.toString();
   }
 }
