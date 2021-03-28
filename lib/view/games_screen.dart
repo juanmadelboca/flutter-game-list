@@ -7,6 +7,7 @@ import 'package:wagr_challenge/model/date_filter.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/repository/games.dart';
 import 'package:wagr_challenge/util/date.dart';
+import 'package:wagr_challenge/widgets/filter_tab.dart';
 import 'package:wagr_challenge/widgets/game_card.dart';
 
 class GamesScreen extends StatefulWidget {
@@ -65,34 +66,17 @@ class _GamesScreenState extends State<GamesScreen> {
                     scrollDirection: Axis.horizontal,
                     itemCount: _filters?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(width: 0.5, color: Colors.black.withAlpha(80)))),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selected = index;
-                              });
-                              int scrollIndex = games.indexWhere(
-                                  (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
-                              scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 5.0,
-                                          color:
-                                              selected == index ? Colors.black.withAlpha(200) : Colors.transparent))),
-                              child: Text(
-                                _filters[index].displayName,
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ),
-                          ),
-                        ),
+                      return FilterTab(
+                        selected: index == selected,
+                        displayName: _filters[index].displayName,
+                        onTap: () {
+                          setState(() {
+                            selected = index;
+                          });
+                          // int scrollIndex = games.indexWhere(
+                          //     (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                          // scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
+                        },
                       );
                     },
                   ),
