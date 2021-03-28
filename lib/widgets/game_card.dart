@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wagr_challenge/constant/colors.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/util/color_parser.dart';
+import 'package:wagr_challenge/widgets/game_date_info.dart';
+import 'package:wagr_challenge/widgets/league_info.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -52,15 +54,11 @@ class GameCard extends StatelessWidget {
                           children: [
                             Text(
                               _calculateSpread(game.spread),
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w400),
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                               textAlign: TextAlign.end,
                             ),
                             Text(game.homeTeam.teamName,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.end),
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.end),
                           ]),
                     ),
                     Text('vs'),
@@ -72,13 +70,9 @@ class GameCard extends StatelessWidget {
                           children: [
                             Text(
                               _calculateSpread(game.spread, awayTeam: true),
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w400),
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                             ),
-                            Text(game.awayTeam.teamName,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold)),
+                            Text(game.awayTeam.teamName, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           ]),
                     ),
                     Row(
@@ -108,14 +102,10 @@ class GameCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(children: [
-                  Icon(getLeagueIcon(game.league)),
-                  Text(leagueValues.reverse[game.league])
-                ],),
-                Row(children: [
-                  Text(_friendlyDatePrint(game.gameDatetime)),
-                  Icon(Icons.watch_later_outlined),
-                ],)
+                LeagueInfo(
+                  league: game.league,
+                ),
+                GameDateInfo(dateTime: game.gameDatetime)
               ],
             ),
           )
@@ -124,35 +114,13 @@ class GameCard extends StatelessWidget {
     );
   }
 
-  IconData getLeagueIcon(League value) {
-    IconData icon;
-    switch(value) {
-      case League.NHL:
-        icon = Icons.sports_hockey;
-        break;
-      case League.NFL:
-        icon = Icons.sports_football_outlined;
-        break;
-      case League.NBA:
-        icon = Icons.sports_basketball_rounded;
-        break;
-      case League.ENGLISH_PREMIER_LEAGUE:
-        icon = Icons.sports_soccer;
-        break;
-    }
-    return icon;
-  }
-
-  String _calculateSpread(String spread, {bool awayTeam = false}){
+  String _calculateSpread(String spread, {bool awayTeam = false}) {
     String calculatedSpread;
-    if(spread == null) return 'Odds pending';
-    calculatedSpread = awayTeam? (double.parse(spread) * -1).toString(): spread;
-    if(double.parse(calculatedSpread) > 0){
+    if (spread == null) return 'Odds pending';
+    calculatedSpread = awayTeam ? (double.parse(spread) * -1).toString() : spread;
+    if (double.parse(calculatedSpread) > 0) {
       calculatedSpread = '+' + calculatedSpread;
     }
     return calculatedSpread;
-  }
-  String _friendlyDatePrint(DateTime dateTime) {
-    return dateTime.hour.toString() + dateTime.timeZoneName;
   }
 }

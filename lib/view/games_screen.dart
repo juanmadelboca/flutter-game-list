@@ -73,9 +73,9 @@ class _GamesScreenState extends State<GamesScreen> {
                           setState(() {
                             selected = index;
                           });
-                          // int scrollIndex = games.indexWhere(
-                          //     (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
-                          // scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
+                          int scrollIndex = games.indexWhere(
+                              (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                          scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
                         },
                       );
                     },
