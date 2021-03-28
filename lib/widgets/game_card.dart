@@ -5,6 +5,7 @@ import 'package:wagr_challenge/util/color_parser.dart';
 import 'package:wagr_challenge/widgets/game_date_info.dart';
 import 'package:wagr_challenge/widgets/league_info.dart';
 import 'package:wagr_challenge/widgets/team_flag.dart';
+import 'package:wagr_challenge/widgets/team_info.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -29,40 +30,27 @@ class GameCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TeamFlag(homeTeam: true, primaryColor: game.homePrimaryColor, secondaryColor: game.homeSecondaryColor,),
-                    Container(
-                      width: 100,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              _calculateSpread(game.spread),
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                              textAlign: TextAlign.end,
-                            ),
-                            Text(game.homeTeam.teamName,
-                                maxLines: 2,
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.end),
-                          ]),
+                    TeamFlag(
+                      homeTeam: true,
+                      primaryColor: game.homePrimaryColor,
+                      secondaryColor: game.homeSecondaryColor,
                     ),
-                    Text('vs'),
-                    Container(
-                      width: 100,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _calculateSpread(game.spread, awayTeam: true),
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                            ),
-                            Text(game.awayTeam.teamName,
-                                maxLines: 2, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                          ]),
+                    TeamInfo(
+                      homeTeam: true,
+                      spread: _calculateSpread(game.spread),
+                      teamName: game.homeTeam.teamName,
                     ),
-                    TeamFlag(homeTeam: false, primaryColor: game.awayPrimaryColor, secondaryColor: game.awaySecondaryColor,),
+                    Text('vs.', style: TextStyle(fontSize: 18),),
+                    TeamInfo(
+                      homeTeam: false,
+                      spread: _calculateSpread(game.spread, awayTeam: true),
+                      teamName: game.awayTeam.teamName,
+                    ),
+                    TeamFlag(
+                      homeTeam: false,
+                      primaryColor: game.awayPrimaryColor,
+                      secondaryColor: game.awaySecondaryColor,
+                    ),
                   ],
                 )),
           ),
