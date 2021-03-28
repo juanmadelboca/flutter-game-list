@@ -37,7 +37,7 @@ class _GamesScreenState extends State<GamesScreen> {
                 ),
               );
             final List<Game> games = snapshot.data;
-            _filters  = _getFilterList(games.first.gameDatetime);
+            _filters = _getFilterList(games.first.gameDatetime);
             return Column(
               children: [
                 SizedBox(
@@ -51,8 +51,7 @@ class _GamesScreenState extends State<GamesScreen> {
                       child: Text(
                         'Games',
                         textAlign: TextAlign.start,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.w400),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                       ),
                     ),
                   ),
@@ -68,10 +67,7 @@ class _GamesScreenState extends State<GamesScreen> {
                     itemBuilder: (context, index) {
                       return Container(
                         decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 0.5,
-                                    color: Colors.black.withAlpha(80)))),
+                            border: Border(bottom: BorderSide(width: 0.5, color: Colors.black.withAlpha(80)))),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: GestureDetector(
@@ -79,7 +75,8 @@ class _GamesScreenState extends State<GamesScreen> {
                               setState(() {
                                 selected = index;
                               });
-                              int scrollIndex = games.indexWhere((element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                              int scrollIndex = games.indexWhere(
+                                  (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
                               scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
                             },
                             child: Container(
@@ -87,9 +84,8 @@ class _GamesScreenState extends State<GamesScreen> {
                                   border: Border(
                                       bottom: BorderSide(
                                           width: 5.0,
-                                          color: selected == index
-                                              ? Colors.black.withAlpha(200)
-                                              : Colors.transparent))),
+                                          color:
+                                              selected == index ? Colors.black.withAlpha(200) : Colors.transparent))),
                               child: Text(
                                 _filters[index].displayName,
                                 style: TextStyle(fontSize: 20),
@@ -107,7 +103,28 @@ class _GamesScreenState extends State<GamesScreen> {
                             itemScrollController: scrollController,
                             itemCount: games?.length ?? 0,
                             itemBuilder: (context, index) {
-                              return GameCard(games[index]);
+                              return Column(
+                                children: [
+                                  if (index == 0 ||
+                                      index == games.length ||
+                                      !compareGameDate(games[index].gameDatetime, games[index - 1].gameDatetime))
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                                      child: Container(
+                                        child: Text(
+                                          _filters
+                                              .firstWhere((element) =>
+                                                  compareGameDate(element.dateTime, games[index].gameDatetime))
+                                              .displayName,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
+                                        ),
+                                        width: double.maxFinite,
+                                      ),
+                                    ),
+                                  GameCard(games[index]),
+                                ],
+                              );
                             }),
                       )
                     : Container(child: Center(child: Text('Error')))
@@ -122,7 +139,7 @@ class _GamesScreenState extends State<GamesScreen> {
     final now = dateTime;
     filters.add(DateFilter(now, 'Today'));
     filters.add(DateFilter(DateTime(now.year, now.month, now.day + 1), 'Tomorrow'));
-    for(int i = 2; i < 7; i++){
+    for (int i = 2; i < 8; i++) {
       final date = DateTime(now.year, now.month, now.day + i);
       filters.add(DateFilter(date, _getFilterName(date)));
     }
