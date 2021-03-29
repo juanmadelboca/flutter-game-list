@@ -12,7 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final Color backgroundColor = Color(0xFFE8BD6F);
   double _scale = 1.0;
 
   @override
@@ -41,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: wagrColor,
         body: Stack(
           children: <Widget>[
             Center(

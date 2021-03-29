@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:wagr_challenge/constant/colors.dart';
 import 'package:wagr_challenge/model/date_filter.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/model/sport_item.dart';
@@ -11,7 +14,7 @@ import 'package:wagr_challenge/util/date.dart';
 import 'package:wagr_challenge/widgets/filter_tab.dart';
 import 'package:wagr_challenge/widgets/game_card.dart';
 
-class GamesScreen extends StatefulWidget {
+class GamesScreen extends StatefulHookWidget {
   static const String routeName = '/GamesScreen';
 
   @override
@@ -27,17 +30,24 @@ class _GamesScreenState extends State<GamesScreen> {
   @override
   Widget build(BuildContext context) {
     GamesRepository gamesRepository = Provider.of(context);
+    final future = useMemoized(() => gamesRepository.getGames());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<Object>(
-          future: gamesRepository.getGames(),
+          future: future,
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return Center(
                 child: Container(
                   width: 50,
                   height: 50,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.black12,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      wagrColor,
+                    ),
+                  ),
                 ),
               );
             List<Game> games = snapshot.data;
@@ -79,12 +89,13 @@ class _GamesScreenState extends State<GamesScreen> {
                                     child: Row(
                                       children: [
                                         Icon(sportItem.icon),
-                                        SizedBox(width: 5,),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
                                         Text(sportItem.displayName),
                                       ],
                                     ));
-                              }).toList()
-                          )
+                              }).toList())
                         ],
                       ),
                     ),
@@ -106,8 +117,19 @@ class _GamesScreenState extends State<GamesScreen> {
                           setState(() {
                             selected = index;
                           });
-                          int scrollIndex = games.indexWhere(
-                                  (element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                          int scrollIndex = games
+                              .indexWhere((element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                          if (scrollIndex < 0) {
+                            Fluttertoast.showToast(
+                                msg: "There are no games for this date",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: whiteCard,
+                                textColor: Colors.black,
+                                fontSize: 18.0);
+                            return;
+                          }
                           scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
                         },
                       );
@@ -116,34 +138,34 @@ class _GamesScreenState extends State<GamesScreen> {
                 ),
                 games != null
                     ? Expanded(
-                  child: ScrollablePositionedList.builder(
-                      itemScrollController: scrollController,
-                      itemCount: games?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            if (index == 0 ||
-                                index == games.length ||
-                                !compareGameDate(games[index].gameDatetime, games[index - 1].gameDatetime))
-                              Padding(
-                                padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                                child: Container(
-                                  child: Text(
-                                    _filters
-                                        .firstWhere((element) =>
-                                        compareGameDate(element.dateTime, games[index].gameDatetime))
-                                        .displayName,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
-                                  ),
-                                  width: double.maxFinite,
-                                ),
-                              ),
-                            GameCard(games[index]),
-                          ],
-                        );
-                      }),
-                )
+                        child: ScrollablePositionedList.builder(
+                            itemScrollController: scrollController,
+                            itemCount: games?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  if (index == 0 ||
+                                      index == games.length ||
+                                      !compareGameDate(games[index].gameDatetime, games[index - 1].gameDatetime))
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                                      child: Container(
+                                        child: Text(
+                                          _filters
+                                              .firstWhere((element) =>
+                                                  compareGameDate(element.dateTime, games[index].gameDatetime))
+                                              .displayName,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
+                                        ),
+                                        width: double.maxFinite,
+                                      ),
+                                    ),
+                                  GameCard(games[index]),
+                                ],
+                              );
+                            }),
+                      )
                     : Container(child: Center(child: Text('Error')))
               ],
             );
@@ -159,9 +181,9 @@ class _GamesScreenState extends State<GamesScreen> {
     for (int i = 2; i < 8; i++) {
       final date = DateTime(now.year, now.month, now.day + i);
       filters.add(DateFilter(date));
-      }
-          return filters;
-      }
+    }
+    return filters;
+  }
 
   SportItem _getSportItem(Sport sport) {
     switch (sport) {

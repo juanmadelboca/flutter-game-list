@@ -74,7 +74,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     Column(
                       children: [
                         Container(
-                            width: 200, height: 200, child: FlareActor('assets/wallet.flr', animation: "coins_out")),
+                            width: 200, height: 200, child: FlareActor('assets/win.flr', animation: "coins_out")),
                         Text(
                           'Congratulations you have put your bet! let\'s hope the best!',
                           textAlign: TextAlign.center,
