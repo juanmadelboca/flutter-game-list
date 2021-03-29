@@ -145,7 +145,7 @@ class MarketSpread {
   };
 }
 
-enum Sport { SOCCER, ICE_HOCKEY, BASKETBALL, FOOTBALL }
+enum Sport { SOCCER, ICE_HOCKEY, BASKETBALL, FOOTBALL, ALL }
 
 final sportValues = EnumValues({
   "BASKETBALL": Sport.BASKETBALL,
