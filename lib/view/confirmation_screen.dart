@@ -2,9 +2,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:wagr_challenge/constant/colors.dart';
-import 'package:wagr_challenge/model/game.dart';
 import 'dart:math';
-
 import 'package:wagr_challenge/util/color_parser.dart';
 import 'package:wagr_challenge/widgets/team_flag.dart';
 
@@ -65,7 +63,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       children: [
                         IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () => Navigator.of(context).pop()),
                         Text(
-                          'Games',
+                          'Congratulations!',
                           textAlign: TextAlign.start,
                           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                         ),
@@ -73,10 +71,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     ),
                     Column(
                       children: [
-                        Container(
-                            width: 200, height: 200, child: FlareActor('assets/win.flr', animation: "coins_out")),
+                        Container(width: 200, height: 200, child: FlareActor('assets/win.flr', animation: "coins_out")),
                         Text(
-                          'Congratulations you have put your bet! let\'s hope the best!',
+                          'Congratulations you have put your bet! Let\'s hope the best!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,

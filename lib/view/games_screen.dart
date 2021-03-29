@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wagr_challenge/constant/colors.dart';
+import 'package:wagr_challenge/enum/sport.dart';
 import 'package:wagr_challenge/model/date_filter.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/model/sport_item.dart';
@@ -73,29 +74,39 @@ class _GamesScreenState extends State<GamesScreen> {
                             textAlign: TextAlign.start,
                             style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                           ),
-                          DropdownButton<Sport>(
-                              value: sportFilter,
-                              underline: SizedBox(),
-                              iconSize: 42,
-                              onChanged: (Sport newValue) {
-                                setState(() {
-                                  sportFilter = newValue;
-                                });
-                              },
-                              items: Sport.values.map((Sport sport) {
-                                SportItem sportItem = _getSportItem(sport);
-                                return DropdownMenuItem<Sport>(
-                                    value: sport,
-                                    child: Row(
-                                      children: [
-                                        Icon(sportItem.icon),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(sportItem.displayName),
-                                      ],
-                                    ));
-                              }).toList())
+                          Container(
+
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: whiteCard,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal:5),
+                              child: DropdownButton<Sport>(
+                                  value: sportFilter,
+                                  underline: SizedBox(),
+                                  iconSize: 30,
+                                  onChanged: (Sport newValue) {
+                                    setState(() {
+                                      sportFilter = newValue;
+                                    });
+                                  },
+                                  items: Sport.values.map((Sport sport) {
+                                    SportItem sportItem = _getSportItem(sport);
+                                    return DropdownMenuItem<Sport>(
+                                        value: sport,
+                                        child: Row(
+                                          children: [
+                                            Icon(sportItem.icon),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(sportItem.displayName),
+                                          ],
+                                        ));
+                                  }).toList()),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -130,7 +141,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                 fontSize: 18.0);
                             return;
                           }
-                          scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
+                          scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 300));
                         },
                       );
                     },

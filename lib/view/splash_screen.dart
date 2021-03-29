@@ -13,27 +13,21 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   double _scale = 1.0;
+  Timer _timer;
+  int count = 0;
 
   @override
   void initState() {
     super.initState();
-    new Timer(Duration(milliseconds: 800),(){
+    _timer = Timer.periodic(Duration(milliseconds: 800), (Timer timer){
       setState(() {
-        _scale = 0.5;
+        _scale = (0.5 * (count % 2)) + 0.5;
       });
-      new Timer(Duration(milliseconds: 800),(){
-        setState(() {
-          _scale = 0.9;
-        });
-        new Timer(Duration(milliseconds: 800),(){
-          setState(() {
-            _scale = 0.6;
-          });
-          new Timer(Duration(milliseconds: 800),(){
-            Navigator.of(context).pushReplacementNamed(GamesScreen.routeName);
-          });
-        });
-      });
+      if(count >= 3){
+        _timer.cancel();
+        Navigator.of(context).pushReplacementNamed(GamesScreen.routeName);
+      }
+        count++;
     });
   }
 

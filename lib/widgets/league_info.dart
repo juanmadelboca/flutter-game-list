@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wagr_challenge/enum/league.dart';
 import 'package:wagr_challenge/model/game.dart';
 
 class LeagueInfo extends StatelessWidget {

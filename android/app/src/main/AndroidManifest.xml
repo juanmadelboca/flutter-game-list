@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wagr.wagr_challenge">
-   <application
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
         android:label="wagr_challenge"
         android:icon="@mipmap/ic_launcher">
         <activity
