@@ -12,6 +12,8 @@ import 'package:wagr_challenge/widgets/filter_tab.dart';
 import 'package:wagr_challenge/widgets/game_card.dart';
 
 class GamesScreen extends StatefulWidget {
+  static const String routeName = '/GamesScreen';
+
   @override
   _GamesScreenState createState() => _GamesScreenState();
 }

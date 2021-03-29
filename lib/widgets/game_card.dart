@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wagr_challenge/constant/colors.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/util/color_parser.dart';
+import 'package:wagr_challenge/view/confirmation_screen.dart';
 import 'package:wagr_challenge/widgets/game_date_info.dart';
 import 'package:wagr_challenge/widgets/league_info.dart';
 import 'package:wagr_challenge/widgets/team_flag.dart';
@@ -18,41 +19,55 @@ class GameCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       child: Column(
         children: [
-          Card(
-            color: whiteCard,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
+          GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed(
+              ConfirmationScreen.routeName,
+              arguments: ConfirmationScreenParams(
+                primaryColor: game.homeTeam.primaryColor,
+                secondaryColor: game.homeTeam.secondaryColor,
+                teamName: game.homeTeam.teamName,
+                spread: _calculateSpread(game.spread),
+              ),
             ),
-            elevation: 3,
-            child: Container(
-                height: 90,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TeamFlag(
-                      homeTeam: true,
-                      primaryColor: game.homePrimaryColor,
-                      secondaryColor: game.homeSecondaryColor,
-                    ),
-                    TeamInfo(
-                      homeTeam: true,
-                      spread: _calculateSpread(game.spread),
-                      teamName: game.homeTeam.teamName,
-                    ),
-                    Text('vs.', style: TextStyle(fontSize: 18),),
-                    TeamInfo(
-                      homeTeam: false,
-                      spread: _calculateSpread(game.spread, awayTeam: true),
-                      teamName: game.awayTeam.teamName,
-                    ),
-                    TeamFlag(
-                      homeTeam: false,
-                      primaryColor: game.awayPrimaryColor,
-                      secondaryColor: game.awaySecondaryColor,
-                    ),
-                  ],
-                )),
+            child: Card(
+              color: whiteCard,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              elevation: 3,
+              child: Container(
+                  height: 90,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TeamFlag(
+                        homeTeam: true,
+                        primaryColor: game.homePrimaryColor,
+                        secondaryColor: game.homeSecondaryColor,
+                      ),
+                      TeamInfo(
+                        homeTeam: true,
+                        spread: _calculateSpread(game.spread),
+                        teamName: game.homeTeam.teamName,
+                      ),
+                      Text(
+                        'vs.',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      TeamInfo(
+                        homeTeam: false,
+                        spread: _calculateSpread(game.spread, awayTeam: true),
+                        teamName: game.awayTeam.teamName,
+                      ),
+                      TeamFlag(
+                        homeTeam: false,
+                        primaryColor: game.awayPrimaryColor,
+                        secondaryColor: game.awaySecondaryColor,
+                      ),
+                    ],
+                  )),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 5.0, right: 3.0, left: 3.0),
