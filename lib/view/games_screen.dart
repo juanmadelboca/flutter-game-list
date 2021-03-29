@@ -59,6 +59,19 @@ class _GamesScreenState extends State<GamesScreen> {
                 ),
               );
             List<Game> games = snapshot.data;
+            if (games.isEmpty)
+              return Container(
+                child: Center(
+                  child: Text(
+                    'Ups there are no games available',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              );
+
             List<DateFilter> filters = _getFilterList(games.first.gameDatetime);
             List<Game> filteredGames = games;
             if (sportFilter != Sport.ALL) {
@@ -96,6 +109,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                   onChanged: (Sport newValue) {
                                     setState(() {
                                       sportFilter = newValue;
+                                      _selected = 0;
                                     });
                                   },
                                   items: Sport.values.map((Sport sport) {
@@ -157,54 +171,52 @@ class _GamesScreenState extends State<GamesScreen> {
                     },
                   ),
                 ),
-                filteredGames != null
-                    ? Expanded(
-                        child: NotificationListener<ScrollUpdateNotification>(
-                          child: ScrollablePositionedList.builder(
-                              itemScrollController: scrollController,
-                              itemPositionsListener: itemPositionsListener,
-                              itemCount: filteredGames?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                bool isFirstItem = (index == 0 ||
-                                    !compareGameDate(
-                                        filteredGames[index].gameDatetime, filteredGames[index - 1].gameDatetime));
-                                return Column(
-                                  children: [
-                                    if (isFirstItem)
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                                        child: Container(
-                                          child: Text(
-                                            filters
-                                                .firstWhere((element) => compareGameDate(
-                                                    element.dateTime, filteredGames[index].gameDatetime))
-                                                .displayName,
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
-                                          ),
-                                          width: double.maxFinite,
-                                        ),
-                                      ),
-                                    GameCard(filteredGames[index]),
-                                  ],
-                                );
-                              }),
-                          onNotification: (notification) {
-                            if (disableScrollNotifier) return false;
-                            int firstVisibleItem = itemPositionsListener.itemPositions.value.first.index;
-                            Game firstVisibleGame = filteredGames[firstVisibleItem];
-                            int selected = filters.indexWhere(
-                                (filter) => compareGameDate(firstVisibleGame.gameDatetime, filter.dateTime));
-                            if (selected >= 0 && _selected != selected) {
-                              setState(() {
-                                _selected = selected;
-                              });
-                            }
-                            return true;
-                          },
-                        ),
-                      )
-                    : Container(child: Center(child: Text('Error')))
+                Expanded(
+                  child: NotificationListener<ScrollUpdateNotification>(
+                    child: ScrollablePositionedList.builder(
+                        itemScrollController: scrollController,
+                        itemPositionsListener: itemPositionsListener,
+                        itemCount: filteredGames?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          bool isFirstItem = (index == 0 ||
+                              !compareGameDate(
+                                  filteredGames[index].gameDatetime, filteredGames[index - 1].gameDatetime));
+                          return Column(
+                            children: [
+                              if (isFirstItem)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                                  child: Container(
+                                    child: Text(
+                                      filters
+                                          .firstWhere((element) =>
+                                              compareGameDate(element.dateTime, filteredGames[index].gameDatetime))
+                                          .displayName,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
+                                    ),
+                                    width: double.maxFinite,
+                                  ),
+                                ),
+                              GameCard(filteredGames[index]),
+                            ],
+                          );
+                        }),
+                    onNotification: (notification) {
+                      if (disableScrollNotifier) return false;
+                      int firstVisibleItem = itemPositionsListener.itemPositions.value.first.index;
+                      Game firstVisibleGame = filteredGames[firstVisibleItem];
+                      int selected = filters
+                          .indexWhere((filter) => compareGameDate(firstVisibleGame.gameDatetime, filter.dateTime));
+                      if (selected >= 0 && _selected != selected) {
+                        setState(() {
+                          _selected = selected;
+                        });
+                      }
+                      return true;
+                    },
+                  ),
+                )
               ],
             );
           }),
