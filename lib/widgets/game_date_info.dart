@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:wagr_challenge/util/date.dart';
 
 class GameDateInfo extends StatelessWidget {
   final DateTime dateTime;
@@ -11,7 +11,7 @@ class GameDateInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       Text(
-        _friendlyDatePrint(dateTime),
+        friendlyHourAndTimeZone(dateTime),
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: gameDateInfoColor),
       ),
       SizedBox(
@@ -23,9 +23,5 @@ class GameDateInfo extends StatelessWidget {
         size: 21,
       ),
     ]);
-  }
-
-  String _friendlyDatePrint(DateTime dateTime) {
-    return DateFormat.jm().format(dateTime) + ' ' ;
   }
 }

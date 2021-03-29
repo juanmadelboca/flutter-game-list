@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wagr_challenge/constant/colors.dart';
 import 'package:wagr_challenge/model/game.dart';
-import 'package:wagr_challenge/util/color_parser.dart';
 import 'package:wagr_challenge/view/confirmation_screen.dart';
 import 'package:wagr_challenge/widgets/game_date_info.dart';
 import 'package:wagr_challenge/widgets/league_info.dart';

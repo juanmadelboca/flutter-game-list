@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wagr_challenge/constant/colors.dart';
+import 'package:wagr_challenge/enum/sport.dart';
 import 'package:wagr_challenge/model/date_filter.dart';
 import 'package:wagr_challenge/model/game.dart';
 import 'package:wagr_challenge/model/sport_item.dart';
@@ -22,10 +23,17 @@ class GamesScreen extends StatefulHookWidget {
 }
 
 class _GamesScreenState extends State<GamesScreen> {
-  int selected = 0;
+  int _selected = 0;
   ItemScrollController scrollController = ItemScrollController();
-  List<DateFilter> _filters;
   Sport sportFilter = Sport.ALL;
+  ItemPositionsListener itemPositionsListener;
+  bool disableScrollNotifier = false;
+
+  @override
+  void initState() {
+    itemPositionsListener = ItemPositionsListener.create();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +59,24 @@ class _GamesScreenState extends State<GamesScreen> {
                 ),
               );
             List<Game> games = snapshot.data;
+            if (games.isEmpty)
+              return Container(
+                child: Center(
+                  child: Text(
+                    'Ups there are no games available',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              );
+
+            List<DateFilter> filters = _getFilterList(games.first.gameDatetime);
+            List<Game> filteredGames = games;
             if (sportFilter != Sport.ALL) {
-              games = games.where((element) => (element.sport == sportFilter)).toList();
+              filteredGames = games.where((element) => (element.sport == sportFilter)).toList();
             }
-            _filters = _getFilterList(games.first.gameDatetime);
             return Column(
               children: [
                 SizedBox(
@@ -73,29 +95,39 @@ class _GamesScreenState extends State<GamesScreen> {
                             textAlign: TextAlign.start,
                             style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                           ),
-                          DropdownButton<Sport>(
-                              value: sportFilter,
-                              underline: SizedBox(),
-                              iconSize: 42,
-                              onChanged: (Sport newValue) {
-                                setState(() {
-                                  sportFilter = newValue;
-                                });
-                              },
-                              items: Sport.values.map((Sport sport) {
-                                SportItem sportItem = _getSportItem(sport);
-                                return DropdownMenuItem<Sport>(
-                                    value: sport,
-                                    child: Row(
-                                      children: [
-                                        Icon(sportItem.icon),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(sportItem.displayName),
-                                      ],
-                                    ));
-                              }).toList())
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: whiteCard,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: DropdownButton<Sport>(
+                                  value: sportFilter,
+                                  underline: SizedBox(),
+                                  iconSize: 30,
+                                  onChanged: (Sport newValue) {
+                                    setState(() {
+                                      sportFilter = newValue;
+                                      _selected = 0;
+                                    });
+                                  },
+                                  items: Sport.values.map((Sport sport) {
+                                    SportItem sportItem = _getSportItem(sport);
+                                    return DropdownMenuItem<Sport>(
+                                        value: sport,
+                                        child: Row(
+                                          children: [
+                                            Icon(sportItem.icon),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(sportItem.displayName),
+                                          ],
+                                        ));
+                                  }).toList()),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -108,17 +140,14 @@ class _GamesScreenState extends State<GamesScreen> {
                   height: 30,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _filters?.length ?? 0,
+                    itemCount: filters?.length ?? 0,
                     itemBuilder: (context, index) {
                       return FilterTab(
-                        selected: index == selected,
-                        displayName: _filters[index].displayName,
-                        onTap: () {
-                          setState(() {
-                            selected = index;
-                          });
-                          int scrollIndex = games
-                              .indexWhere((element) => compareGameDate(element.gameDatetime, _filters[index].dateTime));
+                        selected: index == _selected,
+                        displayName: filters[index].displayName,
+                        onTap: () async {
+                          int scrollIndex = filteredGames
+                              .indexWhere((element) => compareGameDate(element.gameDatetime, filters[index].dateTime));
                           if (scrollIndex < 0) {
                             Fluttertoast.showToast(
                                 msg: "There are no games for this date",
@@ -129,44 +158,65 @@ class _GamesScreenState extends State<GamesScreen> {
                                 textColor: Colors.black,
                                 fontSize: 18.0);
                             return;
+                          } else {
+                            setState(() {
+                              _selected = index;
+                            });
                           }
-                          scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 800));
+                          disableScrollNotifier = true;
+                          await scrollController.scrollTo(index: scrollIndex, duration: Duration(milliseconds: 300));
+                          disableScrollNotifier = false;
                         },
                       );
                     },
                   ),
                 ),
-                games != null
-                    ? Expanded(
-                        child: ScrollablePositionedList.builder(
-                            itemScrollController: scrollController,
-                            itemCount: games?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  if (index == 0 ||
-                                      index == games.length ||
-                                      !compareGameDate(games[index].gameDatetime, games[index - 1].gameDatetime))
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                                      child: Container(
-                                        child: Text(
-                                          _filters
-                                              .firstWhere((element) =>
-                                                  compareGameDate(element.dateTime, games[index].gameDatetime))
-                                              .displayName,
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
-                                        ),
-                                        width: double.maxFinite,
-                                      ),
+                Expanded(
+                  child: NotificationListener<ScrollUpdateNotification>(
+                    child: ScrollablePositionedList.builder(
+                        itemScrollController: scrollController,
+                        itemPositionsListener: itemPositionsListener,
+                        itemCount: filteredGames?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          bool isFirstItem = (index == 0 ||
+                              !compareGameDate(
+                                  filteredGames[index].gameDatetime, filteredGames[index - 1].gameDatetime));
+                          return Column(
+                            children: [
+                              if (isFirstItem)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                                  child: Container(
+                                    child: Text(
+                                      filters
+                                          .firstWhere((element) =>
+                                              compareGameDate(element.dateTime, filteredGames[index].gameDatetime))
+                                          .displayName,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(fontWeight: FontWeight.w400, fontSize: 22),
                                     ),
-                                  GameCard(games[index]),
-                                ],
-                              );
-                            }),
-                      )
-                    : Container(child: Center(child: Text('Error')))
+                                    width: double.maxFinite,
+                                  ),
+                                ),
+                              GameCard(filteredGames[index]),
+                            ],
+                          );
+                        }),
+                    onNotification: (notification) {
+                      if (disableScrollNotifier) return false;
+                      int firstVisibleItem = itemPositionsListener.itemPositions.value.first.index;
+                      Game firstVisibleGame = filteredGames[firstVisibleItem];
+                      int selected = filters
+                          .indexWhere((filter) => compareGameDate(firstVisibleGame.gameDatetime, filter.dateTime));
+                      if (selected >= 0 && _selected != selected) {
+                        setState(() {
+                          _selected = selected;
+                        });
+                      }
+                      return true;
+                    },
+                  ),
+                )
               ],
             );
           }),

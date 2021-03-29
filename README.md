@@ -1,4 +1,4 @@
-# wagr_challenge
+# Games List
 
 A new Flutter application.
 
