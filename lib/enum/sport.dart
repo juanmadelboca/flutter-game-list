@@ -1,6 +1,6 @@
 import 'package:wagr_challenge/util/enum_values.dart';
 
-enum Sport { SOCCER, ICE_HOCKEY, BASKETBALL, FOOTBALL, ALL }
+enum Sport { ALL, SOCCER, ICE_HOCKEY, BASKETBALL, FOOTBALL }
 
 final sportValues = EnumValues({
   "BASKETBALL": Sport.BASKETBALL,
