@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wagr_challenge/view/confirmation_screen.dart';
+import 'package:wagr_challenge/view/splash_screen.dart';
 
 import 'repository/games.dart';
 import 'view/games_screen.dart';
@@ -25,8 +26,9 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           GamesScreen.routeName: (BuildContext context) => GamesScreen(),
           ConfirmationScreen.routeName: (BuildContext context) => ConfirmationScreen(),
+          SplashScreen.routeName: (BuildContext context) => SplashScreen(),
         },
-        initialRoute: GamesScreen.routeName,
+        initialRoute: SplashScreen.routeName,
       ),
     );
   }
